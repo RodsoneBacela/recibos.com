@@ -1,7 +1,7 @@
 import type { FacturaData } from "@/types/factura";
 
 export const initalFacturaData: FacturaData = {
-    numeroFactura: `INV-${Date.now}`,
+    numeroFactura: `INV-${Date.now()}`,
     data: new Date().toISOString().split("T") [0],
     empresa: "",
     empresaNuit: "",
@@ -11,7 +11,7 @@ export const initalFacturaData: FacturaData = {
     cliente: "",
     clienteNuit: "",
     clienteContacto: "",
-    items: [{id: "1", descricaco: "", quantidade: 1, taxa: 0, preco: 0}],
+    items: [{id: "1", descricao: "", quantidade: 1, precoUnitario: 0, valor: 0}],
     taxaImposto: 10,
     subtotal: 0,
     taxaValor: 0,

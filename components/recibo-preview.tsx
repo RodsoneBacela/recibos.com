@@ -2,16 +2,27 @@ import { Download } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import {  } from "./lista";
+import { useFactura } from "@/context/factura-context";
+import { dataFormato } from "@/utils/formatter";
 
 
-export default function ReciboPreview() {
+interface FacturaPreviewProps {
+  onBack: () => void;
+}
+
+
+export default function ReciboPreview({onBack}: FacturaPreviewProps) {
+
+  const  {factura} = useFactura();
+
+
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">pré-visualização da Fatura</h1>
           <div className="space-x-2">
-            <Button variant="outline" >
+            <Button variant="outline" onClick={onBack}>
               Voltar para editar
             </Button>
             <Button >
@@ -27,10 +38,10 @@ export default function ReciboPreview() {
             <div className="flex justify-between items-start mb-8">
               <div>
                 <h1 className="text-3xl font-bold mb-2">Factura</h1>
-                <p className="text-gray-600">#24697592783</p>
+                <p className="text-gray-600">#{factura.numeroFactura}</p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-gray-600">Data: 08/08/2025</p>
+                <p className="text-sm text-gray-600">Data: {dataFormato(factura.data)}</p>
               </div>
             </div>
 
@@ -38,30 +49,30 @@ export default function ReciboPreview() {
             <div className="grid grid-cols-2 gap-8 mb-8">
               <div>
                 <h3 className="font-semibold mb-2">Emitente: </h3>
-                <p className="font-medium">RServicos</p>
+                <p className="font-medium">{factura.empresa}</p>
                 <p className="text-gray-600">
                   <span className="font-semibold text-black">Nuit: </span>
-                   6764582
+                   {factura.empresaNuit}
                 </p>
                 <p className="text-gray-600">
                   <span className="font-semibold text-black">Contacto: </span>
-                  +25884123456789
+                  {factura.empresaContacto}
                 </p>
                 <p className="text-gray-600">
                   <span className="font-semibold text-black">Endereco: </span>
-                  av.24 de JUlho, cidade de Maputo
+                  {factura.empresaEndereco}
                 </p>
               </div>
               <div>
                 <h3 className="font-semibold mb-2">Cliente: </h3>
-                <p className="font-medium">TConsulting</p>
+                <p className="font-medium">{factura.cliente}</p>
                 <p className="text-gray-600">
                   <span className="font-semibold text-black">Nuit: </span>
-                   6764582
+                   {factura.clienteNuit}
                 </p>
                 <p className="text-gray-600">
                   <span className="font-semibold text-black">Contacto: </span>
-                  85252874</p>
+                  {factura.clienteContacto}</p>
               </div>
             </div>
 
@@ -71,25 +82,25 @@ export default function ReciboPreview() {
                 <tr className="border-b-2">
                   <th className="text-left py-2">Descricao</th>
                   <th className="text-center py-2">Quantidade</th>
-                  <th className="text-right py-2">Taxa</th>
                   <th className="text-right py-2">Preco</th>
+                  <th className="text-right py-2">Valor</th>
                 </tr>
               </thead>
               <tbody>
-                {items.map(item => (
+                {factura.items.map(item => (
                   <tr key={item.id} className="border-b">
-                    <td className="py-2">{item.description}</td>
+                    <td className="py-2">{item.descricao}</td>
                     <td className="py-2 text-center">{item.quantidade}</td>
                     <td className="py-2 text-right">
-                      {typeof item.taxa === "number"
-                        ? item.taxa.toFixed(2)
+                      {typeof item.precoUnitario === "number"
+                        ? item.precoUnitario.toFixed(2)
                         : "0.00"
                       }
                       Mzn
                     </td>
                     <td className="py-2 text-right">
-                      {typeof item.preco === "number"
-                        ? item.preco.toFixed(2)
+                      {typeof item.valor === "number"
+                        ? item.valor.toFixed(2)
                         : "0.00"
                       }
                       Mzn
@@ -104,15 +115,15 @@ export default function ReciboPreview() {
               <div className="w-64 space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>5000 Mzn</span>
+                  <span>{factura.subtotal.toFixed(2)} Mzn</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Taxa (5%)</span>
-                  <span>250 Mzn</span>
+                  <span>IVA ({factura.taxaImposto === "number" ? factura.taxaImposto: 0}%)</span>
+                  <span>{factura.taxaValor} Mzn</span>
                 </div>
                 <div className="flex justify-between font-bold text-lg border-t pt-2">
                   <span>Total</span>
-                  <span>5250 Mzn</span>
+                  <span>{factura.total} Mzn</span>
                 </div>
               </div>
             </div>

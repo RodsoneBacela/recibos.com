@@ -17,12 +17,47 @@ export default function ReciboLista({
   canRemove} : FacturaItemProps) {
   const {removeItem, updateItem} = useFactura();
 
+  const handleQuantidadeChange = (value: string) => {
+    if (value === "") {
+      updateItem(index, "quantidade", "");
+    } else {
+      const numValue = Number.parseInt(value);
+      if (!isNaN(numValue) && numValue >= 0) {
+        updateItem(index, "quantidade", numValue )
+      }
+    }
+  }
+
+  const handleQuantidadeBlur = () => {
+    if (item.quantidade === "" || item.quantidade === 0) {
+      updateItem(index, "quantidade", 1)
+    }
+  }
+
+  
+  const handleTaxaChange = (value: string) => {
+    if (value === "") {
+      updateItem(index, "precoUnitario", "");
+    } else {
+      const numValue = Number.parseInt(value);
+      if (!isNaN(numValue) && numValue >= 0) {
+        updateItem(index, "precoUnitario", numValue )
+      }
+    }
+  }
+
+  const handleTaxaBlur = () => {
+    if (item.precoUnitario === "" || item.precoUnitario === 0) {
+      updateItem(index, "precoUnitario", 0)
+    }
+  }
+
 
   return (
     <div className="grid grid-cols-12 gap-4 p-4 border rounded-lg ">
         <div className="col-span-5">
             <div className="flex flex-col gap-1">
-              <Label >Description</Label>
+              <Label >Descrição</Label>
               <Input 
               placeholder="Item Description"
               value={item.descricao}
@@ -37,27 +72,29 @@ export default function ReciboLista({
               type="number" 
               min="1"
               value={item.quantidade}
-              onChange={(e) => updateItem(index, "quantidade", e.target.value)}
+              onChange={(e) => handleQuantidadeChange(e.target.value)}
+              onBlur={handleQuantidadeBlur}
               />
             </div>
         </div>
         <div className="col-span-2">
             <div className="flex flex-col gap-1">
-              <Label >Taxa ($)</Label>
+              <Label >Preco Unitario</Label>
               <Input 
               type="number" 
               min="0" 
               step="0.01"
-              value={item.taxa}
-              onChange={(e) => updateItem(index, "taxa", e.target.value)}
+              value={item.precoUnitario}
+              onChange={(e) => handleTaxaChange(e.target.value)}
+              onBlur={handleTaxaBlur}
               />
             </div>
         </div>
         <div className="col-span-2">
             <div className="flex flex-col gap-1">
-              <Label >Preco</Label>
+              <Label >Valor</Label>
               <div className="h-9 px-3 py-1 bg-gray-50 border rounded-md flex items-center">
-                0.00 Mzn
+                {typeof item.valor === "number" ? item.valor.toFixed(2): "0.00"}  Mzn
               </div>
             </div>
         </div>

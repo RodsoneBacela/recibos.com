@@ -2,6 +2,7 @@
 
 import { initalFacturaData } from "@/lib/constant"
 import { FacturaData, FacturaItem } from "@/types/factura"
+import { TotalCalculado } from "@/utils/calculos"
 import { createContext, ReactNode, useContext, useState } from "react"
 
 interface  FacturaContextType {
@@ -24,7 +25,17 @@ export function FacturaProvider( {children} : {children: ReactNode} ) {
     const [factura, setFactura] = useState<FacturaData>(initalFacturaData);
 
     const updateFactura = (updates: Partial<FacturaData>) => {
-        const novaFactura = {...factura, ...updates}
+        const novaFactura = {...factura, ...updates};
+
+        if(updates.items || updates.taxaImposto !== undefined) {
+            const {subtotal, taxaValor, total} = TotalCalculado(
+                updates.items || factura.items,
+                updates.taxaImposto !== undefined ? updates.taxaImposto : factura.taxaImposto
+            );
+            novaFactura.subtotal = subtotal;
+            novaFactura.taxaValor = taxaValor;
+            novaFactura.total = total;
+        }
         setFactura(novaFactura);
     }
 
@@ -33,8 +44,8 @@ export function FacturaProvider( {children} : {children: ReactNode} ) {
             id: Date.now().toString(),
             descricao: "",
             quantidade: 1,
-            taxa: 0,
-            preco: 0,
+            precoUnitario: 0,
+            valor: 0,
         };
         updateFactura({ items: [...factura. items , novoItem]})
     }
@@ -51,7 +62,33 @@ export function FacturaProvider( {children} : {children: ReactNode} ) {
         field: keyof FacturaItem,
         value: string | number
     ) => {
-        const novoItems = [...factura.items]
+        const novoItems = [...factura.items];
+        novoItems[index] = {...novoItems[index], [field]: value}
+
+        if (field === "quantidade" || field === "precoUnitario") {
+
+            const valorQuantidade = novoItems[index].quantidade;
+            const valorPrecoUnitario = novoItems[index].precoUnitario;
+
+            let quantidade: number;
+            if (typeof valorQuantidade === "string") {
+                quantidade = valorQuantidade === "" ? 0 : Number(valorQuantidade);
+            } else {
+                quantidade = valorQuantidade
+            }
+
+            let taxa: number;
+            if (typeof valorPrecoUnitario === "string") {
+                taxa = valorPrecoUnitario === "" ? 0 : Number(valorPrecoUnitario);
+            } else {
+                taxa = valorPrecoUnitario
+            }
+
+            novoItems[index].valor = quantidade * taxa
+        }
+
+
+        updateFactura({ items: novoItems});
     }
 
     return (

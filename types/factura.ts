@@ -2,8 +2,8 @@ export interface FacturaItem {
     id: string
     descricao : string
     quantidade: number | string
-    taxa: number | string
-    preco: number
+    precoUnitario: number | string
+    valor: number
 }
 
 export interface FacturaData {
