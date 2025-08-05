@@ -12,7 +12,7 @@ export default function Home() {
           Crie recibos<br />com design profissional
         </h2>
         <p className="text-lg text-neutral-500 max-w-xl mx-auto mb-10">
-          Uma ferramenta elegante e eficiente para gerar recibos em PDF. Sem complicações, direto ao ponto.
+          Uma ferramenta simples e eficiente para gerar recibos em PDF. Sem complicações, direto ao ponto.
         </p>
         <Link
           href="/dashboard"
